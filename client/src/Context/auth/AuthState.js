@@ -15,7 +15,10 @@ import {
     REGISTER_SUCCESS,
     REGISTER_FAIL,
     CLEAR_ERRORS,
-    USER_LOADED
+    USER_LOADED,
+    LOGIN_SUCCESS,
+    LOGIN_FAIL,
+    LOGOUT
 } from '../Types';
 
 const AuthState = props => {
@@ -77,10 +80,32 @@ const AuthState = props => {
        }
     };
     // Login User
-    const login = () => console.log('login');
+    const login = async formData => {
+        const config = {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        };
+
+        try {
+            const res = await axios.post('/api/auth', formData, config);
+
+            dispatch({
+                type: LOGIN_SUCCESS,
+                payload: res.data
+            });
+            
+            loadUser();
+        } catch (err) {
+            dispatch({
+                type: LOGIN_FAIL,
+                payload: err.response.data 
+        });
+       }
+    };
 
     // Logout
-    const logout = () => console.log('logout');
+    const logout = () => dispatch({ type: LOGOUT });
 
     // Clear Errors
     const clearErrors = () => dispatch({ type: CLEAR_ERRORS });
